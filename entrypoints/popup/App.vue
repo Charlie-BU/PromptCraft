@@ -8,7 +8,7 @@ import HelloWorld from '@/components/HelloWorld.vue';
       <img src="/wxt.svg" class="logo" alt="WXT logo" />
     </a>
     <a href="https://vuejs.org/" target="_blank">
-      <img src="@/assets/icon/vue.svg" class="logo vue" alt="Vue logo" />
+      <img src="@/assets/icons/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
   <HelloWorld msg="WXT + Vue" />

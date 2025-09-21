@@ -78,7 +78,7 @@ export const allPlatforms: Platform[] = [
         icon: chatgptIcon,
     },
     {
-        name: "GenMini",
+        name: "Genmini",
         URL: "https://gemini.google.com/",
         icon: genminiIcon,
     },

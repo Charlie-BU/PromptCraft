@@ -35,7 +35,7 @@ export const callModel = async (prompt_raw: string) => {
                 },
             }),
         });
-        return response;
+        return response.choices[0].message.content;
     } catch (error) {
         console.error("Stream request failed:", error);
         throw new Error(error instanceof Error ? error.message : "Stream request failed");
