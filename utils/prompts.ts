@@ -11,9 +11,14 @@ export const contents = {
         5. Use **numbered or bulleted lists** when breaking down requirements.
         6. Maintain **formal and neutral tone**.
 
+        ## Special Warnings
+        - If the user input is a question, **do not answer it**, instead, optimize the question in a clearer and nicer way as optimized prompt and return.
+        - If the user input can not be optimized, return empty string as optimized_prompt.
+
         ## Output Format
         You must always return a valid JSON object with the following structure:
         {
+        "status_code": a number. 200 if success, 500 if fail,
         "optimized_prompt": "the improved version of the user’s prompt",
         "explanation": "short summary of the improvements made (clarity, structure, etc.)"
         }
@@ -24,6 +29,7 @@ export const contents = {
 
         Output:
         {
+        "status_code": 200,
         "optimized_prompt": "优化表单样式，确保整体布局整洁美观、结构清晰合理。具体要求如下：\\n1. 表单元素需对齐排列，保持一致的间距和边距\\n2. 字体大小和颜色搭配需协调统一\\n3. 交互元素（如按钮、输入框）需保持统一的视觉风格\\n电解液分子信息部分必须严格按照图示样式呈现，包括：\\n- 分子结构图的尺寸和位置\\n- 化学式的排版格式\\n- 相关属性数据的展示方式\\n确保整体设计既符合视觉规范，又能准确传达技术信息。",
         "explanation": "将原本笼统的描述转化为清晰的分点指令，增强可操作性，保持专业与一致性。"
         }

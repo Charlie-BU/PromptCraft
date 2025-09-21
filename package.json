@@ -15,6 +15,7 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@arco-design/web-vue": "^2.56.3",
     "@vueuse/core": "^13.9.0",
     "ofetch": "^1.4.1",
     "vue": "^3.5.21"

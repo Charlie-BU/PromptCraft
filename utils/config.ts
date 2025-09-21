@@ -71,6 +71,8 @@ type Platform = {
 import chatgptIcon from "@/assets/icons/chatgpt.png";
 import genminiIcon from "@/assets/icons/genmini.svg";
 import deepseekIcon from "@/assets/icons/deepseek.svg";
+import doubaoIcon from "@/assets/icons/doubao.png";
+
 export const allPlatforms: Platform[] = [
     {
         name: "ChatGPT",
@@ -86,5 +88,10 @@ export const allPlatforms: Platform[] = [
         name: "DeepSeek",
         URL: "https://chat.deepseek.com/",
         icon: deepseekIcon,
+    },
+    {
+        name: "Doubao",
+        URL: "https://www.doubao.com/",
+        icon: doubaoIcon,
     },
 ];

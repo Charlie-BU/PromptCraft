@@ -9,20 +9,10 @@
           @click="removeToast(toast.id)"
         >
           <div class="toast__icon">
-            <svg v-if="toast.type === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 12l2 2 4-4"/>
-              <circle cx="12" cy="12" r="10"/>
-            </svg>
-            <svg v-else-if="toast.type === 'warning'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <svg v-else-if="toast.type === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="15" y1="9" x2="9" y2="15"/>
-              <line x1="9" y1="9" x2="15" y2="15"/>
-            </svg>
+            <IconCheckCircle v-if="toast.type === 'success'" />
+            <IconLoading v-else-if="toast.type === 'info'" />
+            <IconExclamationCircle v-else-if="toast.type === 'warning'" />
+            <IconCloseCircle v-else-if="toast.type === 'error'" />
           </div>
           <div class="toast__content">
             <p class="toast__message">{{ toast.message }}</p>
@@ -40,14 +30,16 @@
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted } from 'vue'
-import { useToast } from '@/composables/useToast'
+import { useToast } from '@/hooks/useToast'
+
+import {
+  IconCheckCircle,
+  IconLoading,
+  IconExclamationCircle,
+  IconCloseCircle
+} from '@arco-design/web-vue/es/icon'
 
 const { toasts, removeToast } = useToast()
-
-onUnmounted(() => {
-  // 清理工作在 useToast 中处理
-})
 </script>
 
 <style scoped>
@@ -68,7 +60,7 @@ onUnmounted(() => {
 
 .toast {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: 16px;
   border-radius: 8px;
@@ -87,29 +79,34 @@ onUnmounted(() => {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
+.toast--info {
+  background: rgba(219, 234, 254, 1);
+  color: rgba(30, 64, 175, 1);
+  border: none;
+}
+
 .toast--success {
-  background: rgba(34, 197, 94, 0.95);
-  color: white;
-  border-left: 4px solid #10b981;
+  background: rgba(220, 252, 231, 1);
+  color: rgba(22, 101, 52, 1);
+  border: none;
 }
 
 .toast--warning {
-  background: rgba(245, 158, 11, 0.95);
-  color: white;
-  border-left: 4px solid #f59e0b;
+  background: rgba(254, 243, 199, 1);
+  color: rgba(146, 64, 14, 1);
+  border: none;
 }
 
 .toast--error {
-  background: rgba(239, 68, 68, 0.95);
-  color: white;
-  border-left: 4px solid #ef4444;
+  background: rgba(254, 226, 226, 1);
+  color: rgba(153, 27, 27, 1);
+  border: none;
 }
 
 .toast__icon {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  margin-top: 2px;
 }
 
 .toast__icon svg {
