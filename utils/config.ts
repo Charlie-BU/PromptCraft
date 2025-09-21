@@ -68,6 +68,8 @@ type Platform = {
     icon: string;
 };
 
+export type PlatformName = "ChatGPT" | "Genmini" | "DeepSeek" | "Doubao";
+
 import chatgptIcon from "@/assets/icons/chatgpt.png";
 import genminiIcon from "@/assets/icons/genmini.svg";
 import deepseekIcon from "@/assets/icons/deepseek.svg";

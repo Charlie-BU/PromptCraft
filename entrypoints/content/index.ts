@@ -1,4 +1,4 @@
-import { createApp, ref } from "vue";
+import { createApp } from "vue";
 
 import Toast from "@/components/Toast.vue";
 import { toast } from "@/hooks/useToast";
@@ -11,11 +11,11 @@ import aiIcon from "@/assets/icons/ai.png";
 import loadingIcon from "@/assets/icons/loading.svg";
 
 // 判断当前URL是否在生效URL列表中
-const isValidURL = (currURL: string): "ChatGPT" | "Genmini" | "DeepSeek" | "Doubao" | null => {
+const isValidURL = (currURL: string): PlatformName => {
     const matchedPlatform = allPlatforms.find((each) =>
         currURL.includes(each.URL)
     );
-    return matchedPlatform?.name as "ChatGPT" | "Genmini" | "DeepSeek" | "Doubao" || null;
+    return (matchedPlatform?.name as PlatformName) || null;
 };
 
 let toastApp: any = null;
@@ -41,16 +41,17 @@ let buttonContainer: HTMLElement | null = null;
 let button: HTMLImageElement | null = null;
 let optimizationModal: HTMLElement | null = null;
 
-export const mixin = (
-    platform: "ChatGPT" | "Genmini" | "DeepSeek" | "Doubao"
-) => {
+export const mixin = (platform: PlatformName) => {
     switch (platform) {
         case "ChatGPT":
         case "Genmini":
         case "DeepSeek":
             break;
         case "Doubao":
-            const { textarea: doubaoTextarea, buttonContainer: doubaoButtonContainer } = getDoubaoDOM();
+            const {
+                textarea: doubaoTextarea,
+                buttonContainer: doubaoButtonContainer,
+            } = getDoubaoDOM();
             textarea = doubaoTextarea;
             buttonContainer = doubaoButtonContainer;
             break;
