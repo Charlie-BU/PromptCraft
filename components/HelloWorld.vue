@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { mixin } from '@/entrypoints/content/platforms/deepseek';
+import { mixin } from '@/entrypoints/content';
 import { ref } from 'vue';
 
 defineProps({
@@ -10,7 +10,7 @@ const count = ref(0);
 
 const add = () => {
   count.value++;
-  mixin();
+  mixin('Doubao');
 }
 </script>
 

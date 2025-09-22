@@ -1,9 +1,10 @@
 import { createApp } from "vue";
+import { useDebounceFn } from "@vueuse/core";
 
 import Toast from "@/components/Toast.vue";
 import { toast } from "@/hooks/useToast";
 import { callModel } from "@/entrypoints/background";
-import { parseOptimizeRes } from "@/utils/utils";
+import { parseOptimizeRes, setTextareaValue, setTextareaLoadingStyle } from "@/utils/utils";
 import { allPlatforms } from "@/utils/config";
 import { getDoubaoDOM } from "./platforms/doubao";
 
@@ -38,10 +39,21 @@ const initToast = () => {
 
 let textarea: HTMLTextAreaElement | null = null;
 let buttonContainer: HTMLElement | null = null;
+
 let button: HTMLImageElement | null = null;
 let optimizationModal: HTMLElement | null = null;
 
+// DOM变化监听器
+let domObserver: MutationObserver | null = null;
+let currentPlatform: PlatformName | null = null;
+
+let failCount: number = 0;
+
 export const mixin = (platform: PlatformName) => {
+    if (failCount >= 10) {
+        console.log("mixin failed 10 times, stop");
+        return;
+    }
     switch (platform) {
         case "ChatGPT":
         case "Genmini":
@@ -61,8 +73,15 @@ export const mixin = (platform: PlatformName) => {
 
     if (textarea && buttonContainer) {
         injectButton(buttonContainer);
+        // 启动DOM监听
+        startDOMObserver();
     } else {
-        console.error("textarea or buttonContainer not found");
+        if (!textarea) {
+            console.log("textarea not found. Waiting...");
+        } else {
+            console.log("buttonContainer not found. Waiting...");
+        }
+        ++failCount;
         setTimeout(() => mixin(platform), 1000);
     }
 };
@@ -72,6 +91,13 @@ const injectButton = (container: HTMLElement) => {
         console.error("container not found");
         return;
     }
+
+    // 如果按钮已存在，先移除
+    if (button) {
+        button.remove();
+        button = null;
+    }
+
     button = document.createElement("img");
     button.src = aiIcon;
     button.alt = "优化提示词";
@@ -90,6 +116,59 @@ const injectButton = (container: HTMLElement) => {
     button.addEventListener("click", optimizePrompt);
 };
 
+// 启动DOM变化监听
+const startDOMObserver = () => {
+    // 如果已有监听器，先停止
+    if (domObserver) {
+        domObserver.disconnect();
+    }
+
+    // 使用VueUse的防抖函数
+    const debouncedReinject = useDebounceFn(() => {
+        // 检查按钮是否还在DOM中
+        if (!button || !document.contains(button)) {
+            console.log("Button removed, re-injecting...");
+            if (currentPlatform) {
+                mixin(currentPlatform);
+            }
+        }
+    }, 500);
+
+    domObserver = new MutationObserver((mutations) => {
+        let shouldReinject = false;
+
+        mutations.forEach((mutation) => {
+            // 检查是否有节点被移除
+            if (mutation.type === "childList") {
+                // 如果按钮被移除了
+                mutation.removedNodes.forEach((node) => {
+                    if (
+                        node === button ||
+                        (node instanceof Element && node.contains(button))
+                    ) {
+                        shouldReinject = true;
+                    }
+                });
+                // 检查是否有新的DOM结构变化
+                if (mutation.addedNodes.length > 0) {
+                    shouldReinject = true;
+                }
+            }
+        });
+
+        // 使用VueUse防抖处理，避免频繁重新注入
+        if (shouldReinject && currentPlatform) {
+            debouncedReinject();
+        }
+    });
+
+    // 监听整个document的变化
+    domObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+};
+
 const optimizePrompt = async () => {
     if (!textarea) {
         console.error("textarea not found");
@@ -98,7 +177,6 @@ const optimizePrompt = async () => {
     }
     const prompt = textarea.value;
     if (!prompt) {
-        console.error("prompt is empty");
         toast.warning("请先输入Prompt内容");
         return;
     }
@@ -109,6 +187,7 @@ const optimizePrompt = async () => {
         button.src = loadingIcon;
         button.style.cursor = "auto";
     }
+    setTextareaLoadingStyle(textarea, true);
 
     try {
         const res = await callModel(prompt);
@@ -116,7 +195,9 @@ const optimizePrompt = async () => {
             const { status_code, optimized_prompt, explanation } =
                 parseOptimizeRes(res);
             if (status_code === 200) {
-                // 显示优化结果弹窗
+                if (optimized_prompt) {
+                    setTextareaValue(textarea, optimized_prompt)
+                }
                 showOptimizationModal(
                     optimized_prompt || "",
                     explanation || ""
@@ -133,6 +214,7 @@ const optimizePrompt = async () => {
             "优化失败：" + (error instanceof Error ? error.message : "未知错误")
         );
     } finally {
+        setTextareaLoadingStyle(textarea, false);
         if (button) {
             button.src = aiIcon;
             button.addEventListener("click", optimizePrompt);
@@ -311,6 +393,17 @@ const showOptimizationModal = (
     optimizationModal = modal;
 };
 
+// 弃用：不停轮询开销太大
+// const rollbackCheck = () => {
+//     const interval = setInterval(() => {
+//         button?.remove();
+//         mixin("Doubao");
+//     }, 3000);
+//     return () => {
+//         clearInterval(interval);
+//     };
+// };
+
 export default defineContentScript({
     matches: ["*://*/*"],
     /* main 函数会在以下时机触发：
@@ -318,10 +411,10 @@ export default defineContentScript({
         当用户导航到匹配的新页面时
         当页面从历史记录中恢复时（比如用户点击浏览器的后退按钮）*/
     async main(_ctx) {
-        const currPlatform = isValidURL(window.location.href);
-        if (!currPlatform) return;
+        currentPlatform = isValidURL(window.location.href);
+        if (!currentPlatform) return;
         // 初始化 Toast 容器
         initToast();
-        mixin(currPlatform);
+        mixin(currentPlatform);
     },
 });
