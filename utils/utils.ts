@@ -57,34 +57,47 @@ export const setTextareaLoadingStyle = (DOM: HTMLTextAreaElement, loading: boole
         
         style.textContent = `
             @keyframes textWave {
-                0% { color: #6b7280; }
-                25% { color: #4b5563; }
-                50% { color: #374151; }
-                75% { color: #4b5563; }
-                100% { color: #6b7280; }
+                0% { color: #4a5058; }
+                10% { color: #535861; }
+                20% { color: #7f8491; }
+                30% { color: #b0b7c8; }
+                40% { color: #bac2d6; }
+                50% { color: #c0c8db; }
+                60% { color: #bac2d6; }
+                70% { color: #b0b7c8; }
+                80% { color: #7f8491; }
+                90% { color: #535861; }
+                100% { color: #4a5058; }
             }
             
             .textarea-loading {
-                animation: textWave 2s ease-in-out infinite;
+                animation: textWave 6s ease-in-out infinite;
                 background: linear-gradient(
                     90deg,
-                    #9ca3af 0%,
-                    #6b7280 25%,
-                    #4b5563 50%,
-                    #6b7280 75%,
-                    #9ca3af 100%
+                    #4a5058 0%,
+                    #535861 10%,
+                    #7f8491 20%,
+                    #b0b7c8 30%,
+                    #bac2d6 40%,
+                    #c0c8db 50%,
+                    #bac2d6 60%,
+                    #b0b7c8 70%,
+                    #7f8491 80%,
+                    #535861 90%,
+                    #4a5058 100%
                 );
-                background-size: 200% 100%;
-                animation: textWave 2s ease-in-out infinite, 
-                          backgroundWave 3s ease-in-out infinite;
+                background-size: 300% 100%;
+                animation: textWave 6s ease-in-out infinite, 
+                          backgroundWave 6s ease-in-out infinite;
                 -webkit-background-clip: text;
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
             
             @keyframes backgroundWave {
-                0% { background-position: 200% 0; }
-                100% { background-position: -200% 0; }
+                0% { background-position: 300% 0; }
+                50% { background-position: 0% 0; }
+                100% { background-position: -300% 0; }
             }
         `;
         
