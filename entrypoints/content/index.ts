@@ -6,6 +6,9 @@ import { toast } from "@/hooks/useToast";
 import { callModel } from "@/entrypoints/background";
 import { parseOptimizeRes, setTextareaValue, setTextareaLoadingStyle } from "@/utils/utils";
 import { allPlatforms } from "@/utils/config";
+import { getDeepseekDOM } from "./platforms/deepseek";
+import { getGenminiDOM } from "./platforms/genmini";
+import { getChatGPTDOM } from "./platforms/chatgpt";
 import { getDoubaoDOM } from "./platforms/doubao";
 
 import aiIcon from "@/assets/icons/ai.png";
@@ -50,14 +53,39 @@ let currentPlatform: PlatformName | null = null;
 let failCount: number = 0;
 
 export const mixin = (platform: PlatformName) => {
+    // 平台切换时，重置
+    if (currentPlatform !== platform) {
+        failCount = 0;
+        currentPlatform = platform;
+    }
     if (failCount >= 10) {
         console.log("mixin failed 10 times, stop");
         return;
     }
     switch (platform) {
         case "ChatGPT":
+            const {
+                textarea: chatgptTextarea,
+                buttonContainer: chatgptButtonContainer,
+            } = getChatGPTDOM();
+            textarea = chatgptTextarea;
+            buttonContainer = chatgptButtonContainer;
+            break;
         case "Genmini":
+            const {
+                textarea: genminiTextarea,
+                buttonContainer: genminiButtonContainer,
+            } = getGenminiDOM();
+            textarea = genminiTextarea;
+            buttonContainer = genminiButtonContainer;
+            break;
         case "DeepSeek":
+            const {
+                textarea: deepseekTextarea,
+                buttonContainer: deepseekButtonContainer,
+            } = getDeepseekDOM();
+            textarea = deepseekTextarea;
+            buttonContainer = deepseekButtonContainer;
             break;
         case "Doubao":
             const {
@@ -70,6 +98,10 @@ export const mixin = (platform: PlatformName) => {
         default:
             break;
     }
+
+    console.log(platform);
+    console.log(textarea);
+    console.log(buttonContainer);
 
     if (textarea && buttonContainer) {
         injectButton(buttonContainer);
