@@ -4,7 +4,11 @@ import { useDebounceFn } from "@vueuse/core";
 import Toast from "@/components/Toast.vue";
 import { toast } from "@/hooks/useToast";
 import { callModel } from "@/entrypoints/background";
-import { parseOptimizeRes, setTextareaValue, setTextareaLoadingStyle } from "@/utils/utils";
+import {
+    parseOptimizeRes,
+    setTextareaValue,
+    setTextareaLoadingStyle,
+} from "@/utils/utils";
 import { allPlatforms } from "@/utils/config";
 import { getDeepseekDOM } from "./platforms/deepseek";
 import { getGenminiDOM } from "./platforms/genmini";
@@ -40,7 +44,7 @@ const initToast = () => {
     toastApp.mount(toast);
 };
 
-let textarea: HTMLTextAreaElement | null = null;
+let textarea: HTMLTextAreaElement | HTMLElement | null = null;
 let buttonContainer: HTMLElement | null = null;
 
 let button: HTMLImageElement | null = null;
@@ -98,10 +102,6 @@ export const mixin = (platform: PlatformName) => {
         default:
             break;
     }
-
-    console.log(platform);
-    console.log(textarea);
-    console.log(buttonContainer);
 
     if (textarea && buttonContainer) {
         injectButton(buttonContainer);
@@ -207,7 +207,7 @@ const optimizePrompt = async () => {
         toast.error("未找到输入框，请刷新页面重试");
         return;
     }
-    const prompt = textarea.value;
+    const prompt = textarea instanceof HTMLTextAreaElement ? textarea.value : textarea.textContent;
     if (!prompt) {
         toast.warning("请先输入Prompt内容");
         return;
@@ -228,7 +228,7 @@ const optimizePrompt = async () => {
                 parseOptimizeRes(res);
             if (status_code === 200) {
                 if (optimized_prompt) {
-                    setTextareaValue(textarea, optimized_prompt)
+                    setTextareaValue(textarea, optimized_prompt);
                 }
                 showOptimizationModal(
                     optimized_prompt || "",
@@ -420,7 +420,9 @@ const showOptimizationModal = (
     optimizationModal = modal;
 
     // 获取关闭按钮元素，用于更新倒计时显示
-    const countdownBtn = modal.querySelector(".countdown-btn") as HTMLButtonElement;
+    const countdownBtn = modal.querySelector(
+        ".countdown-btn"
+    ) as HTMLButtonElement;
 
     // 10s自动关闭
     const timer = setInterval(() => {

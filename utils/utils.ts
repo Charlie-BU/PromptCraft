@@ -23,13 +23,17 @@ export const parseOptimizeRes = (
     }
 };
 
-export const setTextareaValue = (DOM: HTMLTextAreaElement, text: string) => {
+export const setTextareaValue = (DOM: HTMLTextAreaElement | HTMLElement, text: string) => {
     if (!DOM) {
         console.warn(`未找到元素: ${DOM}`);
         return;
     }
     // 设置 textarea 的值
-    DOM.value = text;
+    if (DOM instanceof HTMLTextAreaElement) {
+        DOM.value = text;
+    } else if (DOM instanceof HTMLElement) {
+        DOM.textContent = text;
+    }
     // 触发 input 事件（兼容 React/Vue 等框架）
     const event = new Event("input", { bubbles: true });
     DOM.dispatchEvent(event);
@@ -38,7 +42,7 @@ export const setTextareaValue = (DOM: HTMLTextAreaElement, text: string) => {
     DOM.dispatchEvent(changeEvent);
 };
 
-export const setTextareaLoadingStyle = (DOM: HTMLTextAreaElement, loading: boolean) => {
+export const setTextareaLoadingStyle = (DOM: HTMLTextAreaElement | HTMLElement, loading: boolean) => {
     if (!DOM) {
         console.warn(`未找到元素: ${DOM}`);
         return;

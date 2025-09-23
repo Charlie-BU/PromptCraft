@@ -5,15 +5,19 @@
 // ]
 
 export const getDoubaoDOM = () => {
-    const textareas =
-        document.querySelectorAll<HTMLTextAreaElement>("textarea");
-    const textarea = Array.from(textareas).filter(
-        (ta) => ta.placeholder === "发消息或输入 / 选择技能"
-    )[0];
-    const buttonContainer = document.querySelector('[data-testid="asr_btn"]')?.closest('.flex.items-center') as HTMLElement;
+    // const textareas =
+    //     document.querySelectorAll<HTMLTextAreaElement>("textarea");
+    // const textarea = Array.from(textareas).filter(
+    //     (ta) => ta.placeholder === "发消息或输入 / 选择技能"
+    // )[0];
+    const textarea =
+        document.querySelectorAll<HTMLTextAreaElement>("textarea")[0];
+    const buttonContainer = document
+        .querySelector('[data-testid="asr_btn"]')
+        ?.closest(".flex.items-center") as HTMLElement;
 
     return {
-        textarea,   
+        textarea,
         buttonContainer,
     };
 };
