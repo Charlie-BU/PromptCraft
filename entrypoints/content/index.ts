@@ -235,7 +235,8 @@ const showOptimizationModal = (
     }
 
     // 创建弹窗容器
-    const modal = document.createElement("div");
+    const modal: HTMLDivElement = document.createElement("div");
+    let countdown: number = 10;
     modal.className = "optimization-modal";
     modal.style.cssText = `
         position: absolute;
@@ -260,15 +261,12 @@ const showOptimizationModal = (
                 </svg>
                 提示词优化完成
             </h3>
-            <button class="close-btn" style="
+            <button class="countdown-btn" style="
                 width: 24px; height: 24px; border: none; background: none; 
                 color: #6b7280; cursor: pointer; border-radius: 4px;
                 display: flex; align-items: center; justify-content: center;
             ">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
+                ${countdown}
             </button>
         </div>
         
@@ -330,7 +328,6 @@ const showOptimizationModal = (
     }
 
     // 添加事件监听器
-    const closeBtn = modal.querySelector(".close-btn") as HTMLButtonElement;
     const copyBtn = modal.querySelector(".copy-btn") as HTMLButtonElement;
 
     const closeModal = () => {
@@ -339,8 +336,6 @@ const showOptimizationModal = (
             optimizationModal = null;
         }
     };
-
-    closeBtn?.addEventListener("click", closeModal);
 
     copyBtn?.addEventListener("click", async () => {
         try {
@@ -391,6 +386,22 @@ const showOptimizationModal = (
     // 添加到页面
     document.body.appendChild(modal);
     optimizationModal = modal;
+
+    // 获取关闭按钮元素，用于更新倒计时显示
+    const countdownBtn = modal.querySelector(".countdown-btn") as HTMLButtonElement;
+
+    // 10s自动关闭
+    const timer = setInterval(() => {
+        countdown--;
+        // 动态更新关闭按钮的文本内容
+        if (countdownBtn) {
+            countdownBtn.textContent = countdown.toString();
+        }
+        if (countdown <= 0) {
+            closeModal();
+            clearInterval(timer);
+        }
+    }, 1000);
 };
 
 // 弃用：不停轮询开销太大
