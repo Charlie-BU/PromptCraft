@@ -20,6 +20,10 @@
             </div>
         </div>
 
+        <div class="help-message">
+            <p>💡 If the prompt optimization button is not displayed in the input field, please try <span @click="refreshPage" style="color: blue; text-decoration: underline; cursor: pointer;">refreshing the page</span>.</p>
+        </div>
+
         <div class="footer">
             <p>Empowering everyone to craft expert-level prompts</p>
             <p>2025 © PromptCraft by Charlie.BU</p>
@@ -35,6 +39,10 @@ const platforms = ref(allPlatforms);
 
 const navigateToPlatform = (url) => {
     chrome.tabs.create({ url });
+};
+
+const refreshPage = () => {
+    chrome.runtime.reload();
 };
 </script>
 
@@ -219,6 +227,26 @@ const navigateToPlatform = (url) => {
     z-index: 1;
     font-weight: 300;
     letter-spacing: 0.3px;
+}
+
+.help-message {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    z-index: 1;
+}
+
+.help-message p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
 }
 
 .footer p {
