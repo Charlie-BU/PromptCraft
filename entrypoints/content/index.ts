@@ -107,6 +107,7 @@ export const mixin = (platform: PlatformName) => {
         injectButton(buttonContainer);
         // 启动DOM监听
         startDOMObserver();
+        console.log(`mixin success: ${platform}`);
     } else {
         if (!textarea) {
             console.log("textarea not found. Waiting...");
