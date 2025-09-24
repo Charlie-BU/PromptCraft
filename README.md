@@ -7,6 +7,8 @@
 [![WXT](https://img.shields.io/badge/WXT-0.20.6-FF6B35?style=flat-square)](https://wxt.dev/)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=google-chrome)](https://developer.chrome.com/docs/extensions/)
 
+**语言**: **中文** | [English](README_en.md)
+
 ## 🚀 产品概述
 
 **PromptCraft** 是一款专业级的AI提示词优化Chrome扩展，通过智能算法将普通提示词转化为结构化、高效的专业提示词。支持ChatGPT、Gemini、DeepSeek、豆包等主流AI平台，为用户提供一键式的提示词优化体验。
