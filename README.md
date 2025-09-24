@@ -144,30 +144,6 @@ pnpm build:firefox
 **核心价值**: "让每个人都能写出专家级提示词"  
 **竞争优势**: 多平台支持 + 实时优化 + 专业算法 + 隐私安全
 
-## 🔮 未来规划
-
-### 短期目标 (1-3个月)
-- [ ] 支持更多AI平台 (Claude, Perplexity等)
-- [ ] 添加提示词模板库
-- [ ] 优化算法性能
-- [ ] 增加用户使用统计
-
-### 中期目标 (3-6个月)
-- [ ] 开发Firefox版本
-- [ ] 添加团队协作功能
-- [ ] 支持自定义优化规则
-- [ ] 多语言界面支持
-
-### 长期目标 (6-12个月)
-- [ ] 开发移动端应用
-- [ ] 构建提示词社区
-- [ ] AI模型微调服务
-- [ ] 企业级解决方案
-
-## 📄 许可证
-
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
-
 ## 🤝 贡献指南
 
 我们欢迎所有形式的贡献！请查看 [CONTRIBUTING.md](CONTRIBUTING.md) 了解如何参与项目开发。
@@ -175,9 +151,8 @@ pnpm build:firefox
 ## 📞 联系我们
 
 - **作者**: Charlie.BU
-- **邮箱**: [your-email@example.com]
-- **项目主页**: [GitHub Repository]
-- **问题反馈**: [GitHub Issues]
+- **个人网站**: [https://charliebu.cn](https://charliebu.cn)
+- **问题反馈**: [GitHub Issues](https://github.com/Charlie-BU/PromptOptimization/issues)
 
 ---
 
