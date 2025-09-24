@@ -2,7 +2,7 @@
     <div class="welcome-container">
         <div class="header">
             <h1>PromptCraft</h1>
-            <p>专业级AI提示词优化工具</p>
+            <p>Professional AI Prompt Optimization Tool</p>
         </div>
 
         <div class="platforms-container">
@@ -21,7 +21,7 @@
         </div>
 
         <div class="footer">
-            <p>让每个人都能写出专家级提示词</p>
+            <p>Empowering everyone to craft expert-level prompts</p>
             <p>2025 © PromptCraft by Charlie.BU</p>
         </div>
     </div>

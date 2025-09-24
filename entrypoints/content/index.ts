@@ -18,7 +18,7 @@ import { getDoubaoDOM } from "./platforms/doubao";
 import aiIcon from "@/assets/icons/ai.png";
 import loadingIcon from "@/assets/icons/loading.svg";
 
-// 判断当前URL是否在生效URL列表中
+// Check if current URL is in the effective URL list
 const isValidURL = (currURL: string): PlatformName => {
     const matchedPlatform = allPlatforms.find((each) =>
         currURL.includes(each.URL)
@@ -27,19 +27,19 @@ const isValidURL = (currURL: string): PlatformName => {
 };
 
 let toastApp: any = null;
-// 初始化 Toast 组件
+// Initialize Toast component
 const initToast = () => {
-    // 检查是否已经存在 Toast 容器
+    // Check if Toast container already exists
     if (document.getElementById("prompt-optimization-toast-container")) {
         return;
     }
 
-    // 创建 Toast 容器
+    // Create Toast container
     const toast = document.createElement("div");
     toast.id = "prompt-optimization-toast-container";
     document.body.appendChild(toast);
 
-    // 创建并挂载 Vue 应用
+    // Create and mount Vue app
     toastApp = createApp(Toast);
     toastApp.mount(toast);
 };
@@ -50,14 +50,14 @@ let buttonContainer: HTMLElement | null = null;
 let button: HTMLImageElement | null = null;
 let optimizationModal: HTMLElement | null = null;
 
-// DOM变化监听器
+// DOM change listener
 let domObserver: MutationObserver | null = null;
 let currentPlatform: PlatformName | null = null;
 
 let failCount: number = 0;
 
 export const mixin = (platform: PlatformName) => {
-    // 平台切换时，重置
+    // Platform switch reset
     if (currentPlatform !== platform) {
         failCount = 0;
         currentPlatform = platform;
@@ -105,7 +105,7 @@ export const mixin = (platform: PlatformName) => {
 
     if (textarea && buttonContainer) {
         injectButton(buttonContainer);
-        // 启动DOM监听
+        // Start DOM monitoring
         startDOMObserver();
         console.log(`mixin success: ${platform}`);
     } else {
@@ -125,7 +125,7 @@ const injectButton = (container: HTMLElement) => {
         return;
     }
 
-    // 如果按钮已存在，先移除
+    // If button already exists, remove it first
     if (button) {
         button.remove();
         button = null;
@@ -133,14 +133,14 @@ const injectButton = (container: HTMLElement) => {
 
     button = document.createElement("img");
     button.src = aiIcon;
-    button.alt = "优化提示词";
+    button.alt = "Optimize Prompt";
     button.style.width = "24px";
     button.style.height = "24px";
     button.style.marginRight = "5px";
     button.style.borderRadius = "50%";
     button.style.cursor = "pointer";
 
-    // 将按钮插入到第一个子元素位置
+    // Insert button at first child position
     if (container.firstChild) {
         container.insertBefore(button, container.firstChild);
     } else {
@@ -149,16 +149,16 @@ const injectButton = (container: HTMLElement) => {
     button.addEventListener("click", optimizePrompt);
 };
 
-// 启动DOM变化监听
+// Start DOM monitoring
 const startDOMObserver = () => {
-    // 如果已有监听器，先停止
+    // If there's already a listener, stop it first
     if (domObserver) {
         domObserver.disconnect();
     }
 
-    // 使用VueUse的防抖函数
+    // Use VueUse debounce function
     const debouncedReinject = useDebounceFn(() => {
-        // 检查按钮是否还在DOM中
+        // Check if button is still in DOM
         if (!button || !document.contains(button)) {
             console.log("Button removed, re-injecting...");
             if (currentPlatform) {
@@ -171,9 +171,9 @@ const startDOMObserver = () => {
         let shouldReinject = false;
 
         mutations.forEach((mutation) => {
-            // 检查是否有节点被移除
+            // Check if any nodes were removed
             if (mutation.type === "childList") {
-                // 如果按钮被移除了
+                // If button was removed
                 mutation.removedNodes.forEach((node) => {
                     if (
                         node === button ||
@@ -182,20 +182,20 @@ const startDOMObserver = () => {
                         shouldReinject = true;
                     }
                 });
-                // 检查是否有新的DOM结构变化
+                // Check for new DOM structure changes
                 if (mutation.addedNodes.length > 0) {
                     shouldReinject = true;
                 }
             }
         });
 
-        // 使用VueUse防抖处理，避免频繁重新注入
+        // Use VueUse debounce to avoid frequent re-injection
         if (shouldReinject && currentPlatform) {
             debouncedReinject();
         }
     });
 
-    // 监听整个document的变化
+    // Monitor changes to entire document
     domObserver.observe(document.body, {
         childList: true,
         subtree: true,
@@ -205,16 +205,16 @@ const startDOMObserver = () => {
 const optimizePrompt = async () => {
     if (!textarea) {
         console.error("textarea not found");
-        toast.error("未找到输入框，请刷新页面重试");
+        toast.error("Input box not found, please refresh and try again");
         return;
     }
     const prompt = textarea instanceof HTMLTextAreaElement ? textarea.value : textarea.textContent;
-    if (!prompt) {
-        toast.warning("请先输入Prompt内容");
+    if (!prompt?.trim()) {
+        toast.warning("Please enter prompt content first");
         return;
     }
 
-    // 显示生成中状态
+    // Show generating status
     if (button) {
         button.removeEventListener("click", optimizePrompt);
         button.src = loadingIcon;
@@ -236,15 +236,17 @@ const optimizePrompt = async () => {
                     explanation || ""
                 );
             } else {
-                toast.error("优化失败：未获取到有效的优化结果");
+                toast.error("Optimization failed: No valid optimization result received");
+                return;
             }
         } else {
-            toast.error("优化失败：服务器未返回结果");
+            toast.error("Optimization failed: Server returned no result");
+            return;
         }
     } catch (error) {
-        console.error("optimize prompt failed:", error);
+        console.error("Optimization error:", error);
         toast.error(
-            "优化失败：" + (error instanceof Error ? error.message : "未知错误")
+            "Optimization failed: " + (error instanceof Error ? error.message : "Unknown error")
         );
     } finally {
         setTextareaLoadingStyle(textarea, false);
@@ -256,18 +258,18 @@ const optimizePrompt = async () => {
     }
 };
 
-// 显示优化结果弹窗
+// Show optimization result popup
 const showOptimizationModal = (
     optimizedPrompt: string,
     explanation: string
 ) => {
-    // 如果已有弹窗，先移除
+    // If popup already exists, remove it first
     if (optimizationModal) {
         optimizationModal.remove();
         optimizationModal = null;
     }
 
-    // 创建弹窗容器
+    // Create popup container
     const modal: HTMLDivElement = document.createElement("div");
     let countdown: number = 10;
     modal.className = "optimization-modal";
@@ -284,7 +286,7 @@ const showOptimizationModal = (
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
 
-    // 创建弹窗内容
+    // Create popup content
     modal.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
             <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #1f2937; display: flex; align-items: center; gap: 8px;">
@@ -292,7 +294,7 @@ const showOptimizationModal = (
                     <path d="M9 12l2 2 4-4"/>
                     <circle cx="12" cy="12" r="10"/>
                 </svg>
-                提示词优化完成
+                Prompt Optimization Complete
             </h3>
             <button class="countdown-btn" style="
                 width: 24px; height: 24px; border: none; background: none; 
@@ -304,7 +306,7 @@ const showOptimizationModal = (
         </div>
         
         <div style="margin-bottom: 16px;">
-            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #374151;">优化后的内容</h4>
+            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #374151;">Optimized Content</h4>
             <div style="
                 border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; 
                 background: #f9fafb; max-height: 120px; overflow-y: auto;
@@ -318,7 +320,7 @@ const showOptimizationModal = (
         </div>
         
         <div style="margin-bottom: 16px;">
-            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #374151;">优化说明</h4>
+            <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #374151;">Optimization Notes</h4>
             <div style="
                 border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; 
                 background: #f9fafb; max-height: 80px; overflow-y: auto;
@@ -337,12 +339,12 @@ const showOptimizationModal = (
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                 </svg>
-                复制内容
+                Copy Content
             </button>
         </div>
     `;
 
-    // 定位弹窗到按钮上方
+    // Position popup above button
     if (button && buttonContainer) {
         const buttonRect = button.getBoundingClientRect();
 
@@ -350,7 +352,7 @@ const showOptimizationModal = (
         modal.style.left = `${buttonRect.left}px`;
         modal.style.bottom = `${window.innerHeight - buttonRect.top + 10}px`;
 
-        // 确保弹窗不会超出屏幕边界
+        // Ensure popup doesn't exceed screen boundaries
         const modalWidth = 400;
         if (buttonRect.left + modalWidth > window.innerWidth) {
             modal.style.left = `${window.innerWidth - modalWidth - 20}px`;
@@ -360,7 +362,7 @@ const showOptimizationModal = (
         }
     }
 
-    // 添加事件监听器
+    // Add event listeners
     const copyBtn = modal.querySelector(".copy-btn") as HTMLButtonElement;
 
     const closeModal = () => {
@@ -378,7 +380,7 @@ const showOptimizationModal = (
                     <path d="M9 12l2 2 4-4"/>
                     <circle cx="12" cy="12" r="10"/>
                 </svg>
-                已复制
+                Copied
             `;
             setTimeout(() => {
                 copyBtn.innerHTML = `
@@ -386,15 +388,15 @@ const showOptimizationModal = (
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                     </svg>
-                    复制内容
+                    Copy Content
                 `;
             }, 2000);
         } catch (error) {
-            console.error("复制失败:", error);
+            console.error("Copy failed:", error);
         }
     });
 
-    // 点击弹窗外部关闭
+    // Click outside popup to close
     const handleClickOutside = (event: MouseEvent) => {
         if (!modal.contains(event.target as Node)) {
             closeModal();
@@ -402,12 +404,12 @@ const showOptimizationModal = (
         }
     };
 
-    // 延迟添加点击外部监听，避免立即触发
+    // Delay adding outside click listener to avoid immediate trigger
     setTimeout(() => {
         document.addEventListener("click", handleClickOutside);
     }, 100);
 
-    // ESC键关闭
+    // ESC key to close
     const handleKeydown = (event: KeyboardEvent) => {
         if (event.key === "Escape") {
             closeModal();
@@ -416,19 +418,19 @@ const showOptimizationModal = (
     };
     document.addEventListener("keydown", handleKeydown);
 
-    // 添加到页面
+    // Add to page
     document.body.appendChild(modal);
     optimizationModal = modal;
 
-    // 获取关闭按钮元素，用于更新倒计时显示
+    // Get close button element for updating countdown display
     const countdownBtn = modal.querySelector(
         ".countdown-btn"
     ) as HTMLButtonElement;
 
-    // 10s自动关闭
+    // Auto close after 10s
     const timer = setInterval(() => {
         countdown--;
-        // 动态更新关闭按钮的文本内容
+        // Dynamically update close button text content
         if (countdownBtn) {
             countdownBtn.textContent = countdown.toString();
         }
@@ -439,7 +441,7 @@ const showOptimizationModal = (
     }, 1000);
 };
 
-// 弃用：不停轮询开销太大
+// Deprecated: continuous polling is too expensive
 // const rollbackCheck = () => {
 //     const interval = setInterval(() => {
 //         button?.remove();
@@ -452,14 +454,14 @@ const showOptimizationModal = (
 
 export default defineContentScript({
     matches: ["*://*/*"],
-    /* main 函数会在以下时机触发：
-        当匹配的网页完成加载后（页面 DOM 构建完成时）
-        当用户导航到匹配的新页面时
-        当页面从历史记录中恢复时（比如用户点击浏览器的后退按钮）*/
+    /* main function will be triggered at the following times:
+        When the matched webpage finishes loading (when page DOM construction is complete)
+        When user navigates to a matched new page
+        When page is restored from history (e.g., user clicks browser back button) */
     async main(_ctx) {
         currentPlatform = isValidURL(window.location.href);
         if (!currentPlatform) return;
-        // 初始化 Toast 容器
+        // Initialize Toast container
         initToast();
         mixin(currentPlatform);
     },
