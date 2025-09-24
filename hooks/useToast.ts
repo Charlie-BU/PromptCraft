@@ -88,7 +88,7 @@ export const useToast = () => {
     };
 };
 
-// 导出全局实例
+// Toast hook
 export const toast = {
     info: (message: string, duration?: number) =>
         useToast().info(message, duration),

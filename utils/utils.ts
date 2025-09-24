@@ -25,7 +25,7 @@ export const parseOptimizeRes = (
 
 export const setTextareaValue = (DOM: HTMLTextAreaElement | HTMLElement, text: string) => {
     if (!DOM) {
-        console.warn(`未找到元素: ${DOM}`);
+        console.warn(`Element not found: ${DOM}`);
         return;
     }
     // 设置 textarea 的值
@@ -44,7 +44,7 @@ export const setTextareaValue = (DOM: HTMLTextAreaElement | HTMLElement, text: s
 
 export const setTextareaLoadingStyle = (DOM: HTMLTextAreaElement | HTMLElement, loading: boolean) => {
     if (!DOM) {
-        console.warn(`未找到元素: ${DOM}`);
+        console.warn(`Element not found: ${DOM}`);
         return;
     }
     

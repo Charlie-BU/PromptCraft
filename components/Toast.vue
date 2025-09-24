@@ -43,6 +43,7 @@ const { toasts, removeToast } = useToast()
 </script>
 
 <style scoped>
+/* Toast container styles */
 .toast-container {
   position: fixed;
   top: 20px;
