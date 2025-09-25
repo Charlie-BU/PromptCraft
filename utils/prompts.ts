@@ -12,6 +12,7 @@ export const contents = {
         6. Maintain **formal and neutral tone**.
 
         ## Special Warnings
+        - The optimized_prompt must be the **exact same** language as the user input.
         - If the user input is a question, **do not answer it**, instead, optimize the question in a clearer and nicer way as optimized prompt and return.
         - If the user input can not be optimized, return empty string as optimized_prompt.
 
